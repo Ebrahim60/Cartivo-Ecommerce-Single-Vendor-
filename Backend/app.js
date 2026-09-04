@@ -8,8 +8,10 @@ import swaggerUI from "swagger-ui-express";
 import cookieParser from "cookie-parser";
 
 import { swaggerSpec } from "./config/swagger.js";
-// import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
-// import { globalLimiter } from "./middleware/rateLimiter.js";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
+import { globalLimiter } from "./middleware/rateLimiter.js";
+
+import authRoutes from "./routes/authRoutes.js"
 
 dotenv.config();
 
@@ -30,15 +32,18 @@ app.use(compression());
 app.use(express.json());
 
 // Global rate limiter
-// app.use(globalLimiter);
+app.use(globalLimiter);
 
 // Swagger API documentation
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
+//API Routes
+app.use("/api/auth", authRoutes);
+
 // 404 error handler
-// app.use(notFoundHandler);
+app.use(notFoundHandler);
 
 // Global error handler
-// app.use(errorHandler);
+app.use(errorHandler);
 
 export { app };

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import { User } from "./models/userModel.js";
 import { Product } from "./models/productModel.js";
+import { Order } from "./models/orderModel.js";
 
 const dummyUsers = [
     {
@@ -61,6 +62,82 @@ const dummyProducts = [
     },
 ];
 
+//Dummy order
+const dummyOrders = [
+    {
+        user: "68c123456789abcdef123456",
+        items: [
+            {
+                productId: "68c987654321abcdef123456",
+                quantity: 2,
+                price: 2499,
+            },
+            {
+                productId: "68c987654321abcdef654321",
+                quantity: 1,
+                price: 899,
+            },
+        ],
+        totalAmount: 5897,
+        address: {
+            fullName: "John Doe",
+            street: "Kazla Road",
+            city: "Rajshahi",
+            postalCode: "6204",
+            country: "Bangladesh",
+        },
+        paymentId: "PAY-100001",
+        status: "pending",
+    },
+
+    {
+        user: "68c123456789abcdef654321",
+        items: [
+            {
+                productId: "68c987654321abcdef123456",
+                quantity: 1,
+                price: 2499,
+            },
+        ],
+        totalAmount: 2499,
+        address: {
+            fullName: "John Smith",
+            street: "Shaheb Bazar",
+            city: "Rajshahi",
+            postalCode: "6100",
+            country: "Bangladesh",
+        },
+        paymentId: "PAY-100002",
+        status: "shipped",
+    },
+
+    {
+        user: "68c123456789abcdef123456",
+        items: [
+            {
+                productId: "68c987654321abcdef654321",
+                quantity: 2,
+                price: 899,
+            },
+            {
+                productId: "68c987654321abcdef987654",
+                quantity: 1,
+                price: 699,
+            },
+        ],
+        totalAmount: 2497,
+        address: {
+            fullName: "John Doe",
+            street: "New Market Road",
+            city: "Rajshahi",
+            postalCode: "6201",
+            country: "Bangladesh",
+        },
+        paymentId: "PAY-100003",
+        status: "delivered",
+    },
+];
+
 const seedDatabase = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI, {
@@ -71,14 +148,13 @@ const seedDatabase = async () => {
         // Clear existing data
         await User.deleteMany({});
         await Product.deleteMany({});
+        await Order.deleteMany({});
 
         console.log("Existing data cleared");
 
-        // Create users
         await User.create(dummyUsers);
-
-        // Create products
         await Product.create(dummyProducts);
+        await Order.create(dummyOrders);
 
         console.log("Users seeded successfully");
         console.log("Products seeded successfully");

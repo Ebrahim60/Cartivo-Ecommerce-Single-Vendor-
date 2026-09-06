@@ -17,7 +17,7 @@ import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
-//import analyticsRoutes from "./routes/analyticsRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 
 const app = express();
@@ -48,7 +48,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
-//app.use("/api/analytics", analyticsRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // 404 error handler
 app.use(notFoundHandler);

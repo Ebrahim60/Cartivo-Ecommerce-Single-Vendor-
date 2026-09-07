@@ -97,7 +97,7 @@ export const registerUser = async (req, res, next) => {
 
             res.status(201).cookie("token", token, {
                 httpOnly: true,
-                expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 1000)
+                expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000)
             }).json({
                 user: {
                     id: user._id,
@@ -110,7 +110,7 @@ export const registerUser = async (req, res, next) => {
             });
         } else {
             res.status(400).json({
-                mesage: "Invalid user data",
+                message: "Invalid user data",
             });
         };
     } catch (error) {

@@ -88,6 +88,14 @@ export const updateOrderStatus = async (req, res, next) => {
         const { status } = req.body;
         const order = await Order.findById(req.params.id);
 
+        const allowedStatuses = ["pending", "shipped", "delivered"];
+
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({
+                message: "Invalid order status",
+            });
+        }
+
         if (!order) {
             return res.status(404).json({
                 message: "order not found",

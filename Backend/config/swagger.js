@@ -17,7 +17,7 @@ const swaggerDefinition = {
 
     servers: [
         {
-            url: process.env.API_URL || `http://localhost:3000`,
+            url: process.env.API_URL || `http://localhost:${process.env.PORT || 5000}`,
             description: "Cartivo API Server",
         },
     ],

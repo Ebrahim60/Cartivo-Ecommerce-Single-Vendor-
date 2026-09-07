@@ -90,7 +90,7 @@ export const updateProductById = async (req, res, next) => {
 
             if (req.file) {
                 const result = await cloudinary.uploader.upload(req.file.path);
-                product.imgUrl = result.secure_url;
+                product.imageUrls = result.secure_url;
 
             };
         };

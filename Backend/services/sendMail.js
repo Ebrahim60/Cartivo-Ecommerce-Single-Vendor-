@@ -7,18 +7,17 @@ export const sendEmail = async (to, subject, text) => {
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
-            }
+            },
         });
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to,
             subject,
-            text
+            text,
         };
         await transporter.sendMail(mailOptions);
-
     } catch (error) {
-        next(error);
+        throw error;
     }
 };

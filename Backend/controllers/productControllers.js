@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import { Product } from "../models/productModel.js";
 import { cloudinary } from "../config/cloudinary.js";
+import fs from "fs/promises";
 import {
     productSchema,
 } from "../validation/validation.js";
@@ -23,6 +25,8 @@ export const createProduct = async (req, res, next) => {
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path);
             imgUrl = result.secure_url;
+
+            await fs.unlink(req.file.path);  //delete file from local file
         };
 
         const product = await Product.create({
@@ -57,6 +61,13 @@ export const getProducts = async (req, res, next) => {
 //Get single product by  id
 export const getProductById = async (req, res, next) => {
     try {
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid product ID",
+            });
+        }
+
         const product = await Product.findById(req.params.id);
 
         if (!product) {
@@ -92,6 +103,7 @@ export const updateProductById = async (req, res, next) => {
                 const result = await cloudinary.uploader.upload(req.file.path);
                 product.imageUrls = result.secure_url;
 
+                await fs.unlink(req.file.path);
             };
         };
 

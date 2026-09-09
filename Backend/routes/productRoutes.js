@@ -13,7 +13,20 @@ import {
     deleteProductById
 } from "../controllers/productControllers.js";
 
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({
+    dest: 'uploads/',
+    limits: {
+        fileSize: 5 * 1024 * 1024, //5 mb max
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith("image/")) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only image files are allowed"));
+        }
+    },
+});
+
 const router = express.Router();
 
 router.post("/", protect, adminOnly, upload.single('image'), createProduct);

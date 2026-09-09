@@ -230,6 +230,13 @@ export const paymentIPN = async (req, res, next) => {
             });
         }
 
+        // Verify transaction ID
+        if (validationData.tran_id !== order.paymentId) {
+            return res.status(400).json({
+                message: "Transaction ID mismatch",
+            });
+        }
+
         // Verify amount
         const paidAmount = Number(validationData.amount);
         const orderAmount = Number(order.totalAmount);

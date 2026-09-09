@@ -82,11 +82,11 @@ export const updateProductById = async (req, res, next) => {
                 message: "Product not found",
             });
         } else {
-            product.name = name || product.name;
-            product.description = description || product.description;
-            product.price = price || product.price;
-            product.category = category || product.category;
-            product.stock = stock || product.stock;
+            if (name !== undefined) product.name = name;
+            if (description !== undefined) product.description = description;
+            if (price !== undefined) product.price = price;
+            if (category !== undefined) product.category = category;
+            if (stock !== undefined) product.stock = stock;
 
             if (req.file) {
                 const result = await cloudinary.uploader.upload(req.file.path);

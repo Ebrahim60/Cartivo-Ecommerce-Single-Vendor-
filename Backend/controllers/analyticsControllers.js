@@ -8,7 +8,9 @@ export const getaAdminStats = async (req, res, next) => {
         const totalOrders = await Order.countDocuments({});
         const totalProducts = await Product.countDocuments({});
 
-        const orders = await Order.find({});
+        const orders = await Order.find({
+            paymentStatus: "paid",
+        });
 
         const totalRevenueData = orders.reduce((acc, order) => acc + order.totalAmount, 0);
 

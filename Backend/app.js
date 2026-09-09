@@ -35,6 +35,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(compression());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 // Global rate limiter

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import { User } from "./models/userModel.js";
 import { Product } from "./models/productModel.js";
+import { Order } from "./models/orderModel.js";
 
 
 const dummyUsers = [
@@ -11,18 +12,21 @@ const dummyUsers = [
         email: "admin@gmail.com",
         password: "admin123",
         role: "admin",
+        verified: true,
     },
     {
         name: "John Doe",
         email: "johndoe@example.com",
         password: "User@123",
         role: "user",
+        verified: true,
     },
     {
         name: "John Smith",
         email: "johnsmith@example.com",
         password: "User@123",
         role: "user",
+        verified: true,
     },
 ];
 
@@ -73,6 +77,7 @@ const seedDatabase = async () => {
         // Clear existing data
         await User.deleteMany({});
         await Product.deleteMany({});
+        await Order.deleteMany({});
 
         console.log("Existing data cleared");
 

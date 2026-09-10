@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { User } from "../models/userModel.js";
 import { sendEmail } from "../services/sendMail.js";
+import { registrationOTPTemplate } from "../services/emailTemplates.js"
+
 import {
     loginSchema,
     registerUserSchema
@@ -41,6 +43,12 @@ export const login = async (req, res, next) => {
                 message: "Invalid email or password",
             })
         };
+
+        if (!user.verified) {
+            return res.status(403).json({
+                message: "Please verify your email before logging in",
+            });
+        }
 
         const token = generateToken(user._id);
 
@@ -88,31 +96,131 @@ export const registerUser = async (req, res, next) => {
 
         if (user) {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            user.otp = otp;
+            user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+            await user.save();
 
-            const message = `Welcome to Cartivo, ${name}! Thank you for connect with us.We are excited to have you as part of our community.Your OTP for Cartivo registration is: ${otp}`;
+            const { html, text } = registrationOTPTemplate(name, otp);
+            await sendEmail(
+                email,
+                "Cartivo - Email Verification",
+                text,
+                html
+            );
 
-            await sendEmail(email, 'Welcome to Cartivo - Your OTP for Registration', message);
-
-            const token = generateToken(user._id);
-
-            res.status(201).cookie("token", token, {
-                httpOnly: true,
-                expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000)
-            }).json({
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                    token
-                },
-                message: "User registration successfull.Please check you email...",
+            res.status(201).json({
+                message: "Registration successful. Please check your email for the OTP.",
             });
         } else {
             res.status(400).json({
                 message: "Invalid user data",
             });
         };
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controller for verifying user OTP
+export const verifyOTP = async (req, res, next) => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Email and OTP are required",
+            });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        if (user.verified) {
+            return res.status(400).json({
+                message: "User is already verified",
+            });
+        }
+
+        if (!user.otp || !user.otpExpire) {
+            return res.status(400).json({
+                message: "OTP not found. Please request a new OTP",
+            });
+        }
+
+        if (user.otpExpire < new Date()) {
+            return res.status(400).json({
+                message: "OTP has expired",
+            });
+        }
+
+        if (user.otp !== otp) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+            });
+        }
+
+        user.verified = true;
+        user.otp = undefined;
+        user.otpExpire = undefined;
+
+        await user.save();
+
+        res.status(200).json({
+            message: "Email verified successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controller for resending user OTP
+export const resendOTP = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                message: "Email is required",
+            });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        if (user.verified) {
+            return res.status(400).json({
+                message: "User is already verified",
+            });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        user.otp = otp;
+        user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+
+        await user.save();
+
+        const message = `Hello ${user.name}, your new Cartivo OTP is: ${otp}. This OTP is valid for 10 minutes.`;
+
+        await sendEmail(
+            user.email,
+            "Cartivo - New OTP for Registration",
+            message
+        );
+
+        res.status(200).json({
+            message: "New OTP sent successfully. Please check your email.",
+        });
     } catch (error) {
         next(error);
     }

@@ -1,7 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { User } from "../models/userModel.js";
 import { sendEmail } from "../services/sendMail.js";
-import { registrationOTPTemplate } from "../services/emailTemplates.js"
+import {
+    registrationOTPTemplate,
+    resendOTPTemplate,
+} from "../services/emailTemplates.js"
 
 import {
     loginSchema,
@@ -210,12 +213,12 @@ export const resendOTP = async (req, res, next) => {
 
         await user.save();
 
-        const message = `Hello ${user.name}, your new Cartivo OTP is: ${otp}. This OTP is valid for 10 minutes.`;
-
+        const { html, text } = resendOTPTemplate(user.name, otp);
         await sendEmail(
             user.email,
             "Cartivo - New OTP for Registration",
-            message
+            text,
+            html
         );
 
         res.status(200).json({

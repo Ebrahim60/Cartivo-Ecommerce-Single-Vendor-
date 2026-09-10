@@ -226,6 +226,7 @@ Thank you for choosing Cartivo.
     return { html, text };
 };
 
+//Made for future use
 
 // 4. Payment Successful
 export const paymentSuccessTemplate = (name, orderId, amount) => {

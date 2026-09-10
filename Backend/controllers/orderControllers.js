@@ -4,6 +4,12 @@ import { Order } from "../models/orderModel.js";
 import { Product } from "../models/productModel.js";
 import { sendEmail } from "../services/sendMail.js";
 
+import {
+    orderCreatedTemplate,
+    orderShippedTemplate,
+    orderDeliveredTemplate,
+} from "../services/emailTemplates.js";
+
 // Create order
 export const createOrder = async (req, res, next) => {
     try {
@@ -99,37 +105,18 @@ export const createOrder = async (req, res, next) => {
             paymentStatus: "pending",
         });
 
-        const message = `Dear ${req.user.name},
-
-Thank you for your order!
-
-Your order has been successfully created with the following details:
-
-Order ID: ${order._id}
-
-Total Amount: ${totalAmount}
-
-Shipping Address:
-
-${address.fullName}
-
-${address.street}
-
-${address.city}, ${address.postalCode}
-
-${address.country}
-
-Please complete your payment to confirm the order.
-
-Best regards,
-
-Cartivo Team`;
+        const { html, text } = orderCreatedTemplate(
+            req.user.name,
+            order._id,
+            totalAmount
+        );
 
         try {
             await sendEmail(
                 req.user.email,
                 "Order Created - Cartivo",
-                message
+                text,
+                html
             );
         } catch (emailError) {
             console.error("Order email error:", emailError.message);
@@ -193,7 +180,10 @@ export const updateOrderStatus = async (req, res, next) => {
             });
         }
 
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findById(req.params.id).populate(
+            "user",
+            "name email"
+        );
 
         if (!order) {
             return res.status(404).json({
@@ -204,6 +194,40 @@ export const updateOrderStatus = async (req, res, next) => {
         order.status = status;
 
         await order.save();
+
+        // Send email when order status changes
+        try {
+            if (status === "shipped") {
+                const { html, text } = orderShippedTemplate(
+                    order.user.name,
+                    order._id
+                );
+
+                await sendEmail(
+                    order.user.email,
+                    "Order Shipped - Cartivo",
+                    text,
+                    html
+                );
+            }
+
+            if (status === "delivered") {
+                const { html, text } = orderDeliveredTemplate(
+                    order.user.name,
+                    order._id
+                );
+
+                await sendEmail(
+                    order.user.email,
+                    "Order Delivered - Cartivo",
+                    text,
+                    html
+                );
+            }
+        } catch (emailError) {
+            console.error("Order status email error:", emailError.message);
+        }
+
 
         res.status(200).json({
             message: "Order status updated successfully",

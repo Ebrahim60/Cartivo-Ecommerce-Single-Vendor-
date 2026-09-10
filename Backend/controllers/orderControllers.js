@@ -8,6 +8,7 @@ import {
     orderCreatedTemplate,
     orderShippedTemplate,
     orderDeliveredTemplate,
+    orderCancelledTemplate,
 } from "../services/emailTemplates.js";
 
 // Create order
@@ -166,6 +167,7 @@ export const updateOrderStatus = async (req, res, next) => {
             "pending",
             "shipped",
             "delivered",
+            "cancelled",
         ];
 
         if (!allowedStatuses.includes(status)) {
@@ -220,6 +222,20 @@ export const updateOrderStatus = async (req, res, next) => {
                 await sendEmail(
                     order.user.email,
                     "Order Delivered - Cartivo",
+                    text,
+                    html
+                );
+            }
+
+            if (status === "cancelled") {
+                const { html, text } = orderCancelledTemplate(
+                    order.user.name,
+                    order._id
+                );
+
+                await sendEmail(
+                    order.user.email,
+                    "Order Cancelled - Cartivo",
                     text,
                     html
                 );

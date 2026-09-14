@@ -1,3 +1,4 @@
+/*
 const emailLayout = (title, content) => {
     return `
 <!DOCTYPE html>
@@ -476,3 +477,6 @@ Thank you for choosing Cartivo.
 
     return { html, text };
 };
+
+
+*/

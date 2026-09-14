@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 import { Order } from "../models/orderModel.js";
 import { Product } from "../models/productModel.js";
+/*
 import { sendEmail } from "../services/sendMail.js";
 
 import {
@@ -10,6 +11,7 @@ import {
     orderDeliveredTemplate,
     orderCancelledTemplate,
 } from "../services/emailTemplates.js";
+*/
 
 // Create order
 export const createOrder = async (req, res, next) => {
@@ -105,23 +107,24 @@ export const createOrder = async (req, res, next) => {
             address,
             paymentStatus: "pending",
         });
-
-        const { html, text } = orderCreatedTemplate(
-            req.user.name,
-            order._id,
-            totalAmount
-        );
-
-        try {
-            await sendEmail(
-                req.user.email,
-                "Order Created - Cartivo",
-                text,
-                html
-            );
-        } catch (emailError) {
-            console.error("Order email error:", emailError.message);
-        }
+        /*
+       const { html, text } = orderCreatedTemplate(
+           req.user.name,
+           order._id,
+           totalAmount
+       );
+ 
+       try {
+           await sendEmail(
+               req.user.email,
+               "Order Created - Cartivo",
+               text,
+               html
+           );
+       } catch (emailError) {
+           console.error("Order email error:", emailError.message);
+       }
+       */
 
         res.status(201).json({
             message: "Order created successfully",
@@ -196,54 +199,54 @@ export const updateOrderStatus = async (req, res, next) => {
         order.status = status;
 
         await order.save();
-
-        // Send email when order status changes
-        try {
-            if (status === "shipped") {
-                const { html, text } = orderShippedTemplate(
-                    order.user.name,
-                    order._id
-                );
-
-                await sendEmail(
-                    order.user.email,
-                    "Order Shipped - Cartivo",
-                    text,
-                    html
-                );
-            }
-
-            if (status === "delivered") {
-                const { html, text } = orderDeliveredTemplate(
-                    order.user.name,
-                    order._id
-                );
-
-                await sendEmail(
-                    order.user.email,
-                    "Order Delivered - Cartivo",
-                    text,
-                    html
-                );
-            }
-
-            if (status === "cancelled") {
-                const { html, text } = orderCancelledTemplate(
-                    order.user.name,
-                    order._id
-                );
-
-                await sendEmail(
-                    order.user.email,
-                    "Order Cancelled - Cartivo",
-                    text,
-                    html
-                );
-            }
-        } catch (emailError) {
-            console.error("Order status email error:", emailError.message);
-        }
-
+        /*
+         // Send email when order status changes
+         try {
+             if (status === "shipped") {
+                 const { html, text } = orderShippedTemplate(
+                     order.user.name,
+                     order._id
+                 );
+ 
+                 await sendEmail(
+                     order.user.email,
+                     "Order Shipped - Cartivo",
+                     text,
+                     html
+                 );
+             }
+ 
+             if (status === "delivered") {
+                 const { html, text } = orderDeliveredTemplate(
+                     order.user.name,
+                     order._id
+                 );
+ 
+                 await sendEmail(
+                     order.user.email,
+                     "Order Delivered - Cartivo",
+                     text,
+                     html
+                 );
+             }
+ 
+             if (status === "cancelled") {
+                 const { html, text } = orderCancelledTemplate(
+                     order.user.name,
+                     order._id
+                 );
+ 
+                 await sendEmail(
+                     order.user.email,
+                     "Order Cancelled - Cartivo",
+                     text,
+                     html
+                 );
+             }
+         } catch (emailError) {
+             console.error("Order status email error:", emailError.message);
+         }
+         */
 
         res.status(200).json({
             message: "Order status updated successfully",

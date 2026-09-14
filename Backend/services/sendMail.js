@@ -1,3 +1,4 @@
+/*
 import nodemailer from 'nodemailer';
 
 export const sendEmail = async (to, subject, text, html) => {
@@ -24,3 +25,4 @@ export const sendEmail = async (to, subject, text, html) => {
         throw error;
     }
 };
+*/

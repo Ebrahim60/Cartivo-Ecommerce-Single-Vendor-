@@ -12,21 +12,21 @@ const dummyUsers = [
         email: "admin@gmail.com",
         password: "admin123",
         role: "admin",
-        verified: true,
+        // verified: true,
     },
     {
         name: "John Doe",
         email: "johndoe@example.com",
         password: "User@123",
         role: "user",
-        verified: true,
+        //verified: true,
     },
     {
         name: "John Smith",
         email: "johnsmith@example.com",
         password: "User@123",
         role: "user",
-        verified: true,
+        //verified: true,
     },
 ];
 

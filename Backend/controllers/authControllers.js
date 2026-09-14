@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { User } from "../models/userModel.js";
+/*
 import { sendEmail } from "../services/sendMail.js";
 import {
     registrationOTPTemplate,
     resendOTPTemplate,
 } from "../services/emailTemplates.js"
-
+*/
 import {
     loginSchema,
     registerUserSchema
@@ -98,6 +99,7 @@ export const registerUser = async (req, res, next) => {
         });
 
         if (user) {
+            /*
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             user.otp = otp;
             user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
@@ -110,9 +112,10 @@ export const registerUser = async (req, res, next) => {
                 text,
                 html
             );
+            */
 
             res.status(201).json({
-                message: "Registration successful. Please check your email for the OTP.",
+                message: "Registration successful.Please login", /*Please check your email for the OTP.*/
             });
         } else {
             res.status(400).json({
@@ -124,6 +127,7 @@ export const registerUser = async (req, res, next) => {
     }
 };
 
+/*
 // Controller for verifying user OTP
 export const verifyOTP = async (req, res, next) => {
     try {
@@ -228,6 +232,8 @@ export const resendOTP = async (req, res, next) => {
         next(error);
     }
 };
+
+*/
 
 //get all user [admin]
 export const getUsers = async (req, res, next) => {

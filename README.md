@@ -464,7 +464,7 @@ CSE Student & Backend Developer
 
 **GitHub:** [Ebrahim60](https://github.com/Ebrahim60)
 
-**LinkedIn:** [Md Ebrahim Ali](www.linkedin.com/in/mdebrahimdev)
+**LinkedIn:** [Md Ebrahim Ali](https://www.linkedin.com/in/mdebrahimdev/)
 
 ---
 
